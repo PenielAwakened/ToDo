@@ -7,20 +7,23 @@ namespace SQLite
 {
   public class DataHandler
   {
-    private readonly string FILE_PATH = "ToDo.sqlite";
-    public string FilePath { get; set; }
-    private DataHandler db;
-    public DataHandler DB
+    private readonly static string DB_PATH = "ToDo.sqlite";
+    public string DBPath { get; set; }
+    private static DataHandler db;
+    public static DataHandler DB
     {
       get
       {
-        if (File.Exists(FILE_PATH))
+        if (db == null)
         {
-          db = new DataHandler(FILE_PATH);
-        }
-        else
-        {
-          db = new DataHandler();
+          if (File.Exists(DB_PATH))
+          {
+            db = new DataHandler(DB_PATH);
+          }
+          else
+          {
+            db = new DataHandler();
+          }
         }
         return db;
       }
@@ -32,24 +35,24 @@ namespace SQLite
     }
     private DataHandler()
     {
-      SQLiteConnection.CreateFile(FILE_PATH);
-      var conn = new SQLiteConnection($"Data Source={FILE_PATH};");
+      DBPath = DB_PATH;
+      SQLiteConnection.CreateFile(DBPath);
+      var conn = new SQLiteConnection($"Data Source={DBPath};");
       conn.Open();
 
       string sql = "create table ToDo " +
-        "(Id integer primary key autoincrement, Tltle varchar(50), " +
+        "(Id integer primary key autoincrement, Title varchar(50), " +
         "PublishedDate datetime, DeadLine datetime, IsCompleted boolean)";
       ExecuteQueryString(conn, sql);
 
       conn.Close();
     }
-    private DataHandler(string filePath)
+    private DataHandler(string dbPath)
     {
-      FilePath = filePath;
+      DBPath = dbPath;
     }
-    public string DBPath { get; set; }
 
-    public List<object> GetDataFromColumn(string columnName)
+    public List<object> GetDataByColumnName(string columnName)
     {
       var result = new List<object>();
       var conn = new SQLiteConnection($"Data Source={this.DBPath};");
