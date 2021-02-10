@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Data.SQLite;
+using System.Data;
 
 namespace SQLite
 {
@@ -41,7 +42,7 @@ namespace SQLite
       conn.Open();
 
       string sql = "create table ToDo " +
-        "(Id integer primary key autoincrement, Title varchar(50) not null, " +
+        "(Id integer primary key autoincrement, Title varchar(50) not null, Content text null, " +
         "PublishedDate datetime not null, DeadLine datetime null, IsCompleted boolean not null)";
       ExecuteQueryString(conn, sql);
 
@@ -82,11 +83,22 @@ namespace SQLite
     {
       var conn = new SQLiteConnection($"Data Source={DBPath};");
       conn.Open();
-      string sql = "insert into ToDo (Title, PublishedDate, DeadLine, IsCompleted) " +
-        $"values ('{toDo.Title}', '{toDo.PublishedDate}', '{toDo.DeadLine}', false)";
+      string sql = "insert into ToDo (Title, Content, PublishedDate, DeadLine, IsCompleted) " +
+        $"values ('{toDo.Title}', '{toDo.Content}', '{toDo.PublishedDate}', '{toDo.DeadLine}', false)";
 
       ExecuteQueryString(conn, sql);
       conn.Close();
+    }
+    public DataSet ReadAll()
+    {
+      var connStr = $"Data Source={DBPath};";
+      var result = new DataSet();
+
+      string sql = "SELECT * FROM ToDo";
+      var adpt = new SQLiteDataAdapter(sql, connStr);
+      adpt.Fill(result);
+
+      return result;
     }
   }
 }

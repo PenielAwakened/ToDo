@@ -37,6 +37,9 @@ namespace SQLiteBinding
       //  DeadLine = new DateTime(2021, 02, 14),
       //};
       //DataHandler.DB.CreateData(todo1);
+
+      //데이터 읽기
+      DataHandler.DB.ReadAll();
     }
   }
 }
