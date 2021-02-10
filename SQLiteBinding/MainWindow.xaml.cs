@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SQLite;
+using System.Data.SQLite;
 
 namespace SQLiteBinding
 {
@@ -23,6 +25,18 @@ namespace SQLiteBinding
     public MainWindow()
     {
       InitializeComponent();
+    }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+      //데이터 추가 예제
+      //ToDo todo1 = new ToDo()
+      //{
+      //  Title = "잠자기",
+      //  PublishedDate = DateTime.Now,
+      //  DeadLine = new DateTime(2021, 02, 14),
+      //};
+      //DataHandler.DB.CreateData(todo1);
     }
   }
 }
