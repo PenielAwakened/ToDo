@@ -16,13 +16,24 @@ using System.Windows.Shapes;
 namespace ToDoFront
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ToDoHome.xaml
     /// </summary>
-    public partial class MainWindow : NavigationWindow
+    public partial class ToDoHome : Page
     {
-        public MainWindow()
+        public ToDoHome()
         {
             InitializeComponent();
+        }
+
+        private void Edit_Click(object sender, RoutedEventArgs e)
+        {
+            ToDoDetail toDoDetail = new ToDoDetail();
+            this.NavigationService.Navigate(toDoDetail);
+        }
+
+        private void Submit_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }
