@@ -41,8 +41,8 @@ namespace SQLite
       conn.Open();
 
       string sql = "create table ToDo " +
-        "(Id integer primary key autoincrement, Title varchar(50), " +
-        "PublishedDate datetime, DeadLine datetime, IsCompleted boolean)";
+        "(Id integer primary key autoincrement, Title varchar(50) not null, " +
+        "PublishedDate datetime not null, DeadLine datetime null, IsCompleted boolean not null)";
       ExecuteQueryString(conn, sql);
 
       conn.Close();
@@ -77,6 +77,16 @@ namespace SQLite
       conn.Close();
 
       return result;
+    }
+    public void CreateData(ToDo toDo)
+    {
+      var conn = new SQLiteConnection($"Data Source={DBPath};");
+      conn.Open();
+      string sql = "insert into ToDo (Title, PublishedDate, DeadLine, IsCompleted) " +
+        $"values ('{toDo.Title}', '{toDo.PublishedDate}', '{toDo.DeadLine}', false)";
+
+      ExecuteQueryString(conn, sql);
+      conn.Close();
     }
   }
 }
