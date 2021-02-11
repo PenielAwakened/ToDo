@@ -43,7 +43,7 @@ namespace SQLite
 
       string sql = "create table ToDo " +
         "(Id integer primary key autoincrement, Title varchar(50) not null, Content text null, " +
-        "PublishedDate datetime not null, DeadLine datetime null, IsCompleted boolean not null)";
+        "PublishedDate text not null, DeadLine text null, IsCompleted boolean not null)";
       ExecuteQueryString(conn, sql);
 
       conn.Close();
@@ -84,21 +84,27 @@ namespace SQLite
       var conn = new SQLiteConnection($"Data Source={DBPath};");
       conn.Open();
       string sql = "insert into ToDo (Title, Content, PublishedDate, DeadLine, IsCompleted) " +
-        $"values ('{toDo.Title}', '{toDo.Content}', '{toDo.PublishedDate}', '{toDo.DeadLine}', false)";
+        $"values ('{toDo.Title}', {toDo.Content}, '{toDo.PublishedDate}', {toDo.DeadLine}, false)";
 
       ExecuteQueryString(conn, sql);
       conn.Close();
     }
-    public DataSet ReadAll()
+    public DataTable ReadAll()
     {
-      var connStr = $"Data Source={DBPath};";
-      var result = new DataSet();
+      string connStr = $"Data Source={DBPath}";
 
-      string sql = "SELECT * FROM ToDo";
-      var adpt = new SQLiteDataAdapter(sql, connStr);
-      adpt.Fill(result);
+      DataTable dt = new DataTable();
+      using (var conn = new SQLiteConnection(connStr))
+      {
+        conn.Open();
+        string sql = "SELECT * FROM ToDo";
 
-      return result;
+        SQLiteCommand cmd = new SQLiteCommand(sql, conn);
+        SQLiteDataReader rdr = cmd.ExecuteReader();
+        dt.Load(rdr);
+        rdr.Close();
+      }
+      return dt;
     }
   }
 }
