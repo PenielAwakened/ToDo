@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Data.SQLite;
+using System.Data;
 
 namespace SQLite
 {
@@ -41,8 +42,8 @@ namespace SQLite
       conn.Open();
 
       string sql = "create table ToDo " +
-        "(Id integer primary key autoincrement, Title varchar(50) not null, " +
-        "PublishedDate datetime not null, DeadLine datetime null, IsCompleted boolean not null)";
+        "(Id integer primary key autoincrement, Title varchar(50) not null, Content text null, " +
+        "PublishedDate text not null, DeadLine text null, IsCompleted boolean not null)";
       ExecuteQueryString(conn, sql);
 
       conn.Close();
@@ -82,11 +83,28 @@ namespace SQLite
     {
       var conn = new SQLiteConnection($"Data Source={DBPath};");
       conn.Open();
-      string sql = "insert into ToDo (Title, PublishedDate, DeadLine, IsCompleted) " +
-        $"values ('{toDo.Title}', '{toDo.PublishedDate}', '{toDo.DeadLine}', false)";
+      string sql = "insert into ToDo (Title, Content, PublishedDate, DeadLine, IsCompleted) " +
+        $"values ('{toDo.Title}', {toDo.Content}, '{toDo.PublishedDate}', {toDo.DeadLine}, false)";
 
       ExecuteQueryString(conn, sql);
       conn.Close();
+    }
+    public DataTable ReadAll()
+    {
+      string connStr = $"Data Source={DBPath}";
+
+      DataTable dt = new DataTable();
+      using (var conn = new SQLiteConnection(connStr))
+      {
+        conn.Open();
+        string sql = "SELECT * FROM ToDo";
+
+        SQLiteCommand cmd = new SQLiteCommand(sql, conn);
+        SQLiteDataReader rdr = cmd.ExecuteReader();
+        dt.Load(rdr);
+        rdr.Close();
+      }
+      return dt;
     }
   }
 }
