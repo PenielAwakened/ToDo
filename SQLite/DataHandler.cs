@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Data.SQLite;
 using System.Data;
+using System.Data.SQLite;
+using System.IO;
 
 namespace SQLite
 {
@@ -29,10 +29,14 @@ namespace SQLite
         return db;
       }
     }
-    private static void ExecuteQueryString(SQLiteConnection conn, string sql)
+    private void ExecuteQueryString(string sql)
     {
+      var conn = new SQLiteConnection($"Data Source={DBPath};");
+      conn.Open();
+
       var cmd = new SQLiteCommand(sql, conn);
       cmd.ExecuteNonQuery();
+      conn.Close();
     }
     private DataHandler()
     {
@@ -44,7 +48,7 @@ namespace SQLite
       string sql = "create table ToDo " +
         "(Id integer primary key autoincrement, Title varchar(50) not null, Content text null, " +
         "PublishedDate text not null, DeadLine text null, IsCompleted boolean not null)";
-      ExecuteQueryString(conn, sql);
+      ExecuteQueryString(sql);
 
       conn.Close();
     }
@@ -65,7 +69,7 @@ namespace SQLite
 
       while (rdr.Read())
       {
-        if(rdr[columnName].GetType() == typeof(DateTime))
+        if (rdr[columnName].GetType() == typeof(DateTime))
         {
           result.Add(rdr[columnName]);
         }
@@ -84,9 +88,9 @@ namespace SQLite
       var conn = new SQLiteConnection($"Data Source={DBPath};");
       conn.Open();
       string sql = "insert into ToDo (Title, Content, PublishedDate, DeadLine, IsCompleted) " +
-        $"values ('{toDo.Title}', {toDo.Content}, '{toDo.PublishedDate}', {toDo.DeadLine}, false)";
+        $"values ('{toDo.Title}', '{toDo.Content}', '{toDo.PublishedDate}', '{toDo.DeadLine}', false)";
 
-      ExecuteQueryString(conn, sql);
+      ExecuteQueryString(sql);
       conn.Close();
     }
     public DataTable ReadAll()
@@ -105,6 +109,19 @@ namespace SQLite
         rdr.Close();
       }
       return dt;
+    }
+    public void UpdateData(ToDo toDo)
+    {
+      var conn = new SQLiteConnection($"Data Source={DBPath};");
+      conn.Open();
+      string sql = $"UPDATE ToDo SET " +
+        $"Title = '{toDo.Title}', Content = '{toDo.Content}', " +
+        $"DeadLine = '{toDo.DeadLine}', IsCompleted = {toDo.IsCompleted} " +
+        $"WHERE Id = {toDo.Id}";
+
+      ExecuteQueryString(sql);
+      conn.Close();
+
     }
   }
 }
