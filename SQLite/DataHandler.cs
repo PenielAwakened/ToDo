@@ -57,32 +57,6 @@ namespace SQLite
       DBPath = dbPath;
     }
 
-    public List<object> GetDataByColumnName(string columnName)
-    {
-      var result = new List<object>();
-      var conn = new SQLiteConnection($"Data Source={this.DBPath};");
-      conn.Open();
-
-      string sql = $"select {columnName} from ToDo";
-      var cmd = new SQLiteCommand(sql, conn);
-      SQLiteDataReader rdr = cmd.ExecuteReader();
-
-      while (rdr.Read())
-      {
-        if (rdr[columnName].GetType() == typeof(DateTime))
-        {
-          result.Add(rdr[columnName]);
-        }
-        else
-        {
-          result.Add(rdr[columnName].ToString());
-        }
-      }
-      rdr.Close();
-      conn.Close();
-
-      return result;
-    }
     public void CreateData(ToDo toDo)
     {
       var conn = new SQLiteConnection($"Data Source={DBPath};");
@@ -121,7 +95,15 @@ namespace SQLite
 
       ExecuteQueryString(sql);
       conn.Close();
+    }
+    public void DeleteData(ToDo toDo)
+    {
+      var conn = new SQLiteConnection($"Data Source={DBPath};");
+      conn.Open();
+      string sql = $"Delete From ToDo Where Id={toDo.Id}";
 
+      ExecuteQueryString(sql);
+      conn.Close();
     }
   }
 }
