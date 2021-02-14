@@ -66,9 +66,17 @@ namespace SQLiteBinding
       };
       DataHandler.DB.UpdateData(todo);
     }
+    private void DeleteData()
+    {
+      ToDo todo = new ToDo()
+      {
+        Id = 2
+      };
+      DataHandler.DB.DeleteData(todo);
+    }
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-      UpdateData();
+      DeleteData();
     }
   }
 }
